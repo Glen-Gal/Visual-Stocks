@@ -1,0 +1,51 @@
+:root {
+    --primary-color-1: #f4a500;
+    --primary-color-2: #22aee3;
+    --primary-color-3: #e6482d;
+  }
+
+  
+.banner-height{
+    height: 90vh;
+}
+
+.banner-white{
+    background-color: #f5f5f7;
+}
+
+.bg-cream{
+    background-color: #fafafa;
+}
+
+.bg-dark-cream{
+    background-color: #fbfbfd;
+}
+
+*{
+    scroll-behavior: smooth;
+}
+
+.header{
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(20px);
+}
+
+.yellow_color{
+    color: var(--primary-color-1)
+}
+.blue_color{
+    color: var(--primary-color-2)
+}
+.red_color{
+    color: var(--primary-color-3)
+}
+
+.bg-yellow-color{
+    background-color: var(--primary-color-1)
+}
+.bg-blue-color{
+    background-color: var(--primary-color-2)
+}
+.bg-red-color{
+    background-color: var(--primary-color-3)
+}
