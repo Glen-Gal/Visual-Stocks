@@ -6,7 +6,8 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.plot.ly/plotly-latest.min.css">
     <link rel="stylesheet" href="../static/style.css">
-    <title>Tesla Stock Dashboard</title>
+    <link rel="icon" href="../static/logo/d_for_data.ico" type="image/x-icon">
+    <title>Visual Stocks</title>
 </head>
 <body class="font-sans bg-white">
 
@@ -108,20 +109,33 @@
             this data has been obtained.
         </p>
         <div class="flex justify-start items-start w-full p-4 gap-2">
-            <!-- Stock Information -->
-            <div class="bg-dark-cream p-6 rounded-lg w-full">
-                <h2 class="text-xl font-semibold">Tesla Stock Information</h2>
-                <p>Stock Price: $755.35</p>
-                <p>Market Cap: $758.72 billion</p>
-                <p>52-Week High: $900.40</p>
-                <p>52-Week Low: $539.11</p>
-                <!-- Add more stock data as needed -->
+            <!-- New div for Total Volume Line Chart -->
+            <div class="bg-cream p-6 rounded-lg w-full relative text-center">
+                <h2 class="text-xl font-semibold">Total Volume of Stocks Traded</h2>
+                <div id="stock-volume-chart" class="w-full"></div>
+                <!-- Filter Buttons -->
+                <div class=''>
+                    <div class="flex justify-center items-center mt-4 gap-10">
+                        <button id="allChartButton" class='text-gray-400 hover:text-black' onclick="toggleCharts('all')">All</button>
+                        <button id="5dChartButton" class='text-gray-400 hover:text-black' onclick="toggleCharts('5d')">5d</button>
+                        <button id="6mChartButton" class='text-gray-400 hover:text-black' onclick="toggleCharts('6m')">6m</button>
+                        <button id="1yChartButton" class='text-gray-400 hover:text-black' onclick="toggleCharts('1y')">1y</button>
+                        <button id="5yChartButton" class='text-gray-400 hover:text-black' onclick="toggleCharts('5y')">5y</button>
+                    </div>
+                </div>
             </div>
-    
-            <!-- Stock Chart -->
+
+            <!-- New div for Pie Chart -->
             <div class="bg-cream p-6 rounded-lg w-full">
-                <h2 class="text-xl font-semibold">Tesla Stock Chart</h2>
-                <div id="stock-chart" class="w-full"></div>
+                <h2 class="text-xl font-semibold text-center">Time Series Influence on Total Volume Trade by Month</h2>
+                <div id="pie-chart" class="w-full"></div>
+            </div>
+        </div>
+        <div class="flex justify-start items-start w-full p-4 gap-2">
+            <!-- New div for Max Volume by Day of the Week Bar Chart -->
+            <div class="bg-cream p-6 rounded-lg w-full relative text-center">
+                <h2 class="text-xl font-semibold">Max Volume by Day of the Week</h2>
+                <div id="max-volume-by-day-chart" class="w-full"></div>
             </div>
         </div>
     </section>
@@ -146,31 +160,191 @@
     <!-- Sample JavaScript for Chart (Replace with your own data and charting library) -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script>
-        // Sample data (Replace with actual stock data)
-        const stockData = [
-            { date: '2023-01-01', price: 750 },
-            { date: '2023-01-02', price: 755 },
-            { date: '2023-01-03', price: 760 },
-            // Add more data points
-        ];
+        // Parse the JSON data passed from Flask for Total Volume
+        var graphVolumeJSON = {{ graphVolumeJSON | safe }};
+        
+        // Parse the JSON data passed from Flask for Stock Price
+        var graphStockJSON = {{ graphStockJSON | safe }};
 
-        // Create a Plotly chart (Sample, replace with your data and customization)
-        const chartData = {
-            x: stockData.map(item => item.date),
-            y: stockData.map(item => item.price),
-            type: 'line',
-            mode: 'lines+markers',
-            marker: { color: 'blue' },
-            line: { shape: 'spline' },
-        };
+        // Parse the JSON data passed from Flask for Stock Price of 6 months
+        var graph6mJSON = {{ graph6mJSON | safe }};
 
-        const chartLayout = {
-            title: 'Tesla Stock Price',
-            xaxis: { title: 'Date' },
-            yaxis: { title: 'Price (USD)' },
-        };
+        // Parse the JSON data passed from Flask for Stock Price of 1 year
+        var graph1yJSON = {{ graph1yJSON | safe }};
 
-        Plotly.newPlot('stock-chart', [chartData], chartLayout);
+        // Parse the JSON data passed from Flask for Stock Price of 5 years
+        var graph5yJSON = {{ graph5yJSON | safe }};
+
+        // Parse the JSON data passed from Flask for Max Volume by Day of the Week
+        var graphMaxVolumeByDayJSON = {{ graphMaxVolumeByDayJSON | safe }};
+        
+       // Update the layout for responsiveness and set transparent background
+    var layoutVolume = {
+        responsive: true,
+        autosize: true,
+        margin: {
+            l: 50,
+            r: 50,
+            b: 50,
+            t: 50,
+            pad: 4
+        },
+        plot_bgcolor: 'rgba(0, 0, 0, 0)',
+        paper_bgcolor: 'rgba(0, 0, 0, 0)'
+    };
+
+    var layoutStock = {
+        responsive: true,
+        autosize: true,
+        margin: {
+            l: 50,
+            r: 50,
+            b: 50,
+            t: 50,
+            pad: 4
+        },
+        plot_bgcolor: 'rgba(0, 0, 0, 0)',
+        paper_bgcolor: 'rgba(0, 0, 0, 0)'
+    };
+
+    var layout6m = {
+        responsive: true,
+        autosize: true,
+        margin: {
+            l: 50,
+            r: 50,
+            b: 50,
+            t: 50,
+            pad: 4
+        },
+        plot_bgcolor: 'rgba(0, 0, 0, 0)',
+        paper_bgcolor: 'rgba(0, 0, 0, 0)'
+    };
+
+    var layout1y = {
+        responsive: true,
+        autosize: true,
+        margin: {
+            l: 50,
+            r: 50,
+            b: 50,
+            t: 50,
+            pad: 4
+        },
+        plot_bgcolor: 'rgba(0, 0, 0, 0)',
+        paper_bgcolor: 'rgba(0, 0, 0, 0)'
+    };
+
+    var layout5y = {
+        responsive: true,
+        autosize: true,
+        margin: {
+            l: 50,
+            r: 50,
+            b: 50,
+            t: 50,
+            pad: 4
+        },
+        plot_bgcolor: 'rgba(0, 0, 0, 0)',
+        paper_bgcolor: 'rgba(0, 0, 0, 0)'
+    };
+    
+    var layoutMaxVolumeByDay = {
+        responsive: true,
+        autosize: true,
+        margin: {
+            l: 50,
+            r: 50,
+            b: 50,
+            t: 50,
+            pad: 4
+        },
+        plot_bgcolor: 'rgba(0, 0, 0, 0)',
+        paper_bgcolor: 'rgba(0, 0, 0, 0)'
+    };
+
+        // Function to toggle between the two charts
+        function toggleCharts(current) {
+            var volumeChartDiv = document.getElementById('stock-volume-chart');
+            
+            var buttonIds = ['allChartButton', '5dChartButton', '6mChartButton', '1yChartButton', '5yChartButton'];
+        
+            // Remove 'text-black' class and add 'text-gray-400' class for all buttons
+            buttonIds.forEach(function(buttonId) {
+                var button = document.getElementById(buttonId);
+                button.classList.remove('text-black');
+                button.classList.add('text-gray-400');
+            });
+        
+            // Set 'text-black' class and remove 'text-gray-400' class for the current button
+            var currentButton = document.getElementById(current + 'ChartButton');
+            currentButton.classList.add('text-black');
+            currentButton.classList.remove('text-gray-400');
+        
+            if (current === 'all') {
+                Plotly.newPlot('stock-volume-chart', graphVolumeJSON, layoutVolume);
+            } else if (current === '5d') {
+                Plotly.newPlot('stock-volume-chart', graphStockJSON, layoutStock);
+            } else if (current === '6m') {
+                Plotly.newPlot('stock-volume-chart', graph6mJSON, layout6m);
+            } else if (current === '1y') {
+                // Add code to render the 1-year chart
+                Plotly.newPlot('stock-volume-chart', graph1yJSON, layout1y);
+            } else if (current === '5y') {
+                // Add code to render the 5-year chart
+                Plotly.newPlot('stock-volume-chart', graph5yJSON, layout5y);
+            }
+        }        
+         
+
+        // Initial rendering of Total Volume chart
+        Plotly.newPlot('stock-volume-chart', graphVolumeJSON, layoutVolume);
+
     </script>
+
+    <script>
+        // Parse the JSON data passed from Flask for Pie Chart
+        var graphPieJSON = {{ graphPieJSON | safe }};
+    
+        // Update the layout for responsiveness
+        var layoutPie = {
+            responsive: true,
+            autosize: true,
+            margin: {
+                l: 50,
+                r: 50,
+                b: 50,
+                t: 50,
+                pad: 4
+            },
+        };
+    
+        // Render the Plotly chart for the pie chart
+        Plotly.newPlot('pie-chart', graphPieJSON, layoutPie);
+    </script>
+
+    <script>
+        // Parse the JSON data passed from Flask for Max Volume by Day of the Week
+        var graphMaxVolumeByDayJSON = {{ graphMaxVolumeByDayJSON | safe }};
+        
+        // Update the layout for responsiveness
+        var layoutMaxVolumeByDay = {
+            responsive: true,
+            autosize: true,
+            margin: {
+                l: 50,
+                r: 50,
+                b: 50,
+                t: 50,
+                pad: 4
+            },
+        };
+
+        console.log('Data for Max Volume by Day of the Week:', graphMaxVolumeByDayJSON);
+    
+        // Render the Plotly chart for Max Volume by Day of the Week
+        Plotly.newPlot('max-volume-by-day-chart', graphMaxVolumeByDayJSON, layoutMaxVolumeByDay);
+    </script>
+
 </body>
 </html>
