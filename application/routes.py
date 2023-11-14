@@ -345,7 +345,7 @@ def index():
     df['WeekDay'] = df['Date'].dt.weekday
 
     # Group the data by weekday and calculate the sum of 'Volume'
-    check = df.groupby('WeekDay')['Volume'].max().reset_index()
+    check = df.groupby('WeekDay')['High'].max().reset_index()
 
     # Create a dictionary to map numerical values to weekday labels
     weekday_mapping = {
@@ -364,14 +364,14 @@ def index():
     check.index = check.index.map(weekday_mapping)
 
     # Create Plotly Bar Chart for Total Volume of Stocks Traded WeekDay-wise
-    fig_weekday = px.bar(check, x=check.index, y='Volume',
-                        labels={'Volume': 'Total Volume of Stocks Traded'},
+    fig_weekday = px.bar(check, x=check.index, y='High',
+                        labels={'High': 'Total Price of Stocks Traded'},
                         height=400)
 
     # Set the layout
     fig_weekday.update_layout(
         xaxis_title='Weekday', 
-        yaxis_title='Total Volume',
+        yaxis_title='Max Price',
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)'
     )
