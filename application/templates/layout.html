@@ -112,15 +112,22 @@
             <!-- New div for Total Volume Line Chart -->
             <div class="bg-cream p-6 rounded-lg w-full relative text-center">
                 <h2 class="text-xl font-semibold">Total Volume of Stocks Traded</h2>
+                <div class="flex justify-center items-center mt-4 gap-10">
+                    <button id="allChartButton" class='text-gray-400 hover:text-black' onclick="toggleCharts('all')">All</button>
+                    <button id="5dChartButton" class='text-gray-400 hover:text-black' onclick="toggleCharts('5d')">5d</button>
+                    <button id="6mChartButton" class='text-gray-400 hover:text-black' onclick="toggleCharts('6m')">6m</button>
+                    <button id="1yChartButton" class='text-gray-400 hover:text-black' onclick="toggleCharts('1y')">1y</button>
+                    <button id="5yChartButton" class='text-gray-400 hover:text-black' onclick="toggleCharts('5y')">5y</button>
+                </div>
                 <div id="stock-volume-chart" class="w-full"></div>
                 <!-- Filter Buttons -->
                 <div class=''>
                     <div class="flex justify-center items-center mt-4 gap-10">
-                        <button id="allChartButton" class='text-gray-400 hover:text-black' onclick="toggleCharts('all')">All</button>
-                        <button id="5dChartButton" class='text-gray-400 hover:text-black' onclick="toggleCharts('5d')">5d</button>
-                        <button id="6mChartButton" class='text-gray-400 hover:text-black' onclick="toggleCharts('6m')">6m</button>
-                        <button id="1yChartButton" class='text-gray-400 hover:text-black' onclick="toggleCharts('1y')">1y</button>
-                        <button id="5yChartButton" class='text-gray-400 hover:text-black' onclick="toggleCharts('5y')">5y</button>
+                        <div>Open $673.69 </div>
+                        <div>High $786.14 </div>
+                        <div>Low $673.52 </div>
+                        <div>Close $780.00</div>
+                        <div>Volume 47M </div>
                     </div>
                 </div>
             </div>
@@ -134,8 +141,21 @@
         <div class="flex justify-start items-start w-full p-4 gap-2">
             <!-- New div for Max Volume by Day of the Week Bar Chart -->
             <div class="bg-cream p-6 rounded-lg w-full relative text-center">
-                <h2 class="text-xl font-semibold">Max Volume by Day of the Week</h2>
+                <h2 class="text-xl font-semibold">Correleation</h2>
+                <div id="scatter-max-volume-by-day-chart" class="w-full"></div>
+            </div>
+            <div class="bg-cream p-6 rounded-lg w-full relative text-center">
+                <h2 class="text-xl font-semibold">Total Stock Volume Traded(2010-2020)</h2>
+                <div class="flex justify-center items-center mt-4 gap-10">
+                    <button id="firstButton" class='text-gray-400 hover:text-black' onclick="toggleChartsMini('first')">Week</button>
+                    <button id="secondButton" class='text-gray-400 hover:text-black' onclick="toggleChartsMini('second')">Month</button>
+                    <button id="thirdButton" class='text-gray-400 hover:text-black' onclick="toggleChartsMini('third')">Year</button>
+                </div>
                 <div id="max-volume-by-day-chart" class="w-full"></div>
+            </div>
+            <div class="bg-cream p-6 rounded-lg w-full relative text-center">
+                <h2 class="text-xl font-semibold">Max Stock Volume Traded(WeekDay)</h2>
+                <div id="weekday-chart" class="w-full"></div>
             </div>
         </div>
     </section>
@@ -161,7 +181,7 @@
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script>
         // Parse the JSON data passed from Flask for Total Volume
-        var graphVolumeJSON = {{ graphVolumeJSON | safe }};
+        var newGraphJSON = {{ newGraphJSON | safe }};
         
         // Parse the JSON data passed from Flask for Stock Price
         var graphStockJSON = {{ graphStockJSON | safe }};
@@ -175,8 +195,23 @@
         // Parse the JSON data passed from Flask for Stock Price of 5 years
         var graph5yJSON = {{ graph5yJSON | safe }};
 
+        // Parse the JSON data passed from Flask for Total Volume
+        var graphWeekdayLineJSON = {{ graphWeekdayLineJSON | safe }};
+
+        // Parse the JSON data passed from Flask for Total Volume
+        var graphMonthLineJSON = {{ graphMonthLineJSON | safe }};
+
+        // Parse the JSON data passed from Flask for Total Volume
+        var graphYearLineJSON = {{ graphYearLineJSON | safe }};
+
         // Parse the JSON data passed from Flask for Max Volume by Day of the Week
         var graphMaxVolumeByDayJSON = {{ graphMaxVolumeByDayJSON | safe }};
+
+        // Parse the JSON data passed from Flask for Max Volume by Day of the Week Scatter Plot
+        var graphScatterJSON = {{ graphScatterJSON | safe }};
+
+        // Parse the JSON data passed from Flask for Max Volume by Week Days
+        var graphWeekdayJSON = {{ graphWeekdayJSON | safe }};
         
        // Update the layout for responsiveness and set transparent background
     var layoutVolume = {
@@ -282,7 +317,7 @@
             currentButton.classList.remove('text-gray-400');
         
             if (current === 'all') {
-                Plotly.newPlot('stock-volume-chart', graphVolumeJSON, layoutVolume);
+                Plotly.newPlot('stock-volume-chart', newGraphJSON, layoutStock);
             } else if (current === '5d') {
                 Plotly.newPlot('stock-volume-chart', graphStockJSON, layoutStock);
             } else if (current === '6m') {
@@ -294,12 +329,47 @@
                 // Add code to render the 5-year chart
                 Plotly.newPlot('stock-volume-chart', graph5yJSON, layout5y);
             }
-        }        
+        }   
+        
+        // Function to toggle between the two charts
+        function toggleChartsMini(current) {
+            var volumeChartDiv = document.getElementById('max-volume-by-day-chart');
+            
+            var buttonIds = ['firstButton', 'secondButton', 'thirdButton'];
+        
+            // Remove 'text-black' class and add 'text-gray-400' class for all buttons
+            buttonIds.forEach(function(buttonId) {
+                var button = document.getElementById(buttonId);
+                button.classList.remove('text-black');
+                button.classList.add('text-gray-400');
+            });
+        
+            // Set 'text-black' class and remove 'text-gray-400' class for the current button
+            var currentButton = document.getElementById(current + 'Button');
+            currentButton.classList.add('text-black');
+            currentButton.classList.remove('text-gray-400');
+        
+            if (current === 'first') {
+                Plotly.newPlot('max-volume-by-day-chart', graphWeekdayLineJSON, layoutVolume);
+            } else if (current === 'second') {
+                Plotly.newPlot('max-volume-by-day-chart', graphMonthLineJSON, layoutVolume);
+            } else if (current === 'third') {
+                Plotly.newPlot('max-volume-by-day-chart', graphYearLineJSON, layoutVolume);
+            }
+        }   
          
 
         // Initial rendering of Total Volume chart
-        Plotly.newPlot('stock-volume-chart', graphVolumeJSON, layoutVolume);
+        Plotly.newPlot('stock-volume-chart', newGraphJSON, layoutStock);
 
+        // Max Volume chart
+        Plotly.newPlot('scatter-max-volume-by-day-chart', graphScatterJSON, layoutVolume);
+
+        // Max Volume chart
+        Plotly.newPlot('max-volume-by-day-chart', graphWeekdayLineJSON, layoutVolume);
+
+        // Max Volume chart
+        Plotly.newPlot('weekday-chart', graphWeekdayJSON, layoutVolume);
     </script>
 
     <script>
@@ -322,29 +392,5 @@
         // Render the Plotly chart for the pie chart
         Plotly.newPlot('pie-chart', graphPieJSON, layoutPie);
     </script>
-
-    <script>
-        // Parse the JSON data passed from Flask for Max Volume by Day of the Week
-        var graphMaxVolumeByDayJSON = {{ graphMaxVolumeByDayJSON | safe }};
-        
-        // Update the layout for responsiveness
-        var layoutMaxVolumeByDay = {
-            responsive: true,
-            autosize: true,
-            margin: {
-                l: 50,
-                r: 50,
-                b: 50,
-                t: 50,
-                pad: 4
-            },
-        };
-
-        console.log('Data for Max Volume by Day of the Week:', graphMaxVolumeByDayJSON);
-    
-        // Render the Plotly chart for Max Volume by Day of the Week
-        Plotly.newPlot('max-volume-by-day-chart', graphMaxVolumeByDayJSON, layoutMaxVolumeByDay);
-    </script>
-
 </body>
 </html>
