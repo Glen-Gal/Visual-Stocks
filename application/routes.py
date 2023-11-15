@@ -57,6 +57,7 @@ def index():
                             labels={'Volume': 'Total Volume of Stocks Traded'},
                             height=400,
                             markers=True,  # Add markers
+
                             )
 
     # Set the layout
@@ -66,6 +67,9 @@ def index():
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)'
     )
+    
+    # WeekDay-wise Total Volume
+    fig_weekday_line.update_traces(line=dict(color='#076bfc'), marker=dict(color='#076bfc'))
 
     # Convert the Plotly figure to JSON for rendering in HTML
     graph_weekday_line_json = json.dumps(fig_weekday_line, cls=plotly.utils.PlotlyJSONEncoder)
@@ -95,6 +99,9 @@ def index():
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)'
     )
+    
+    # Month-wise Total Volume
+    fig_month_line.update_traces(line=dict(color='#076bfc'), marker=dict(color='#076bfc'))
 
     # Convert the Plotly figure to JSON for rendering in HTML
     graph_month_line_json = json.dumps(fig_month_line, cls=plotly.utils.PlotlyJSONEncoder)
@@ -123,6 +130,9 @@ def index():
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)'
     )
+    
+    # Year-wise Total Volume
+    fig_year_line.update_traces(line=dict(color='#076bfc'), marker=dict(color='#076bfc'))
 
     # Convert the Plotly figure to JSON for rendering in HTML
     graph_year_line_json = json.dumps(fig_year_line, cls=plotly.utils.PlotlyJSONEncoder)
@@ -145,6 +155,9 @@ def index():
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)'
     )
+    
+    # Stock Price for the last 5 dates
+    fig_stock.update_traces(line=dict(color='#076bfc'), marker=dict(color='#076bfc'))
 
     # Convert the Plotly figure to JSON for rendering in HTML
     graph_stock_json = json.dumps(fig_stock, cls=plotly.utils.PlotlyJSONEncoder)
@@ -167,6 +180,9 @@ def index():
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)'
     )
+    
+    # Stock Price for the last 6 months
+    fig_6m.update_traces(line=dict(color='#076bfc'), marker=dict(color='#076bfc'))
 
     # Convert the Plotly figure to JSON for rendering in HTML
     graph_6m_json = json.dumps(fig_6m, cls=plotly.utils.PlotlyJSONEncoder)
@@ -189,6 +205,9 @@ def index():
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)'
     )
+    
+    # Stock Price for the last 1 year
+    fig_1y.update_traces(line=dict(color='#076bfc'), marker=dict(color='#076bfc'))
 
     # Convert the Plotly figure to JSON for rendering in HTML
     graph_1y_json = json.dumps(fig_1y, cls=plotly.utils.PlotlyJSONEncoder)
@@ -211,6 +230,9 @@ def index():
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)'
     )
+
+    # Stock Price for the last 5 years
+    fig_5y.update_traces(line=dict(color='#076bfc'), marker=dict(color='#076bfc'))
 
     # Convert the Plotly figure to JSON for rendering in HTML
     graph_5y_json = json.dumps(fig_5y, cls=plotly.utils.PlotlyJSONEncoder)
@@ -244,6 +266,9 @@ def index():
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)'
     )
+    
+    # Monthly Volume bar chart
+    fig_pie.update_traces(marker=dict(color='#076bfc'))
 
     # Convert the Plotly figure to JSON for rendering in HTML
     graph_pie_json = json.dumps(fig_pie, cls=plotly.utils.PlotlyJSONEncoder)
@@ -282,6 +307,8 @@ def index():
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)'
     )
+    # Max Volume by Day of the Week
+    fig_max_volume_by_day.update_traces(marker=dict(color='#076bfc'))
 
     # Convert the Plotly figure to JSON for rendering in HTML
     graph_max_volume_by_day_json = json.dumps(fig_max_volume_by_day, cls=plotly.utils.PlotlyJSONEncoder)
@@ -300,6 +327,9 @@ def index():
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)'
     )
+    
+    # New Chart (F)
+    fig_new.update_traces(line=dict(color='#076bfc'), marker=dict(color='#076bfc'))
 
     # Convert the Plotly figure to JSON for rendering in HTML
     graph_new_json = json.dumps(fig_new, cls=plotly.utils.PlotlyJSONEncoder)
@@ -333,9 +363,9 @@ def index():
         paper_bgcolor='rgba(0,0,0,0)',
     )
     
-    # Set the line color to red
-    fig_scatter_poly.update_traces(line=dict(color='red'))
-
+    # Scatter of Volume Chart (F)
+    fig_scatter_poly.update_traces(marker=dict(color='#076bfc'), line=dict(color='red'))
+    
     # Convert the Plotly figure to JSON for rendering in HTML
     graph_scatter_json = json.dumps(fig_scatter_poly, cls=plotly.utils.PlotlyJSONEncoder)
 
@@ -375,11 +405,14 @@ def index():
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)'
     )
+    
+    # Max Stock Volume Traded (WeekDay)
+    fig_weekday.update_traces(marker=dict(color='#076bfc'))
 
     # Convert the Plotly figure to JSON for rendering in HTML
     graph_weekday_json = json.dumps(fig_weekday, cls=plotly.utils.PlotlyJSONEncoder)
-
-
+    
+    
     # Include this in your render_template
     return render_template("layout.html", 
                            graphWeekdayJSON=graph_weekday_json, 
